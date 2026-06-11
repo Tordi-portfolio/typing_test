@@ -1,0 +1,189 @@
+{% extends 'typingtest/base.html' %}
+
+{% block title %}My Results{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <h1>📊 Your Typing Test Results</h1>
+    
+    <!-- Difficulty Filter -->
+    <div class="difficulty-filter">
+        <a href="?difficulty=all" class="filter-btn {% if difficulty_filter == 'all' %}active{% endif %}">All</a>
+        <a href="?difficulty=easy" class="filter-btn easy-btn {% if difficulty_filter == 'easy' %}active{% endif %}">Easy</a>
+        <a href="?difficulty=medium" class="filter-btn medium-btn {% if difficulty_filter == 'medium' %}active{% endif %}">Medium</a>
+        <a href="?difficulty=hard" class="filter-btn hard-btn {% if difficulty_filter == 'hard' %}active{% endif %}">Hard</a>
+    </div>
+    
+    <div class="stats-summary">
+        <div class="stat-box">
+            <h3>Average WPM</h3>
+            <p>{{ avg_wpm }}</p>
+        </div>
+        <div class="stat-box">
+            <h3>Average Accuracy</h3>
+            <p>{{ avg_accuracy }}%</p>
+        </div>
+        <div class="stat-box">
+            <h3>Total Tests</h3>
+            <p>{{ total_tests }}</p>
+        </div>
+    </div>
+
+    <!-- Difficulty Stats -->
+    <div class="difficulty-stats">
+        <h3>Performance by Difficulty</h3>
+        <div class="stats-grid">
+            <div class="difficulty-stat-box easy">
+                <h4>Easy</h4>
+                <p class="stat-value">{{ easy_avg_wpm }} WPM</p>
+                <p class="stat-label">{{ easy_tests_count }} tests</p>
+            </div>
+            <div class="difficulty-stat-box medium">
+                <h4>Medium</h4>
+                <p class="stat-value">{{ medium_avg_wpm }} WPM</p>
+                <p class="stat-label">{{ medium_tests_count }} tests</p>
+            </div>
+            <div class="difficulty-stat-box hard">
+                <h4>Hard</h4>
+                <p class="stat-value">{{ hard_avg_wpm }} WPM</p>
+                <p class="stat-label">{{ hard_tests_count }} tests</p>
+            </div>
+        </div>
+    </div>
+    
+    {% if tests %}
+    <div class="results-table">
+        <h3>All Tests</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Difficulty</th>
+                    <th>WPM</th>
+                    <th>Accuracy</th>
+                    <th>Errors</th>
+                    <th>Time (seconds)</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for test in tests %}
+                <tr class="{% if test.wpm >= avg_wpm %}above-average{% endif %}">
+                    <td>
+                        <span class="difficulty-badge {{ test.difficulty }}">{{ test.get_difficulty_display }}</span>
+                    </td>
+                    <td><strong>{{ test.wpm }}</strong></td>
+                    <td>{{ test.accuracy }}%</td>
+                    <td>{{ test.errors }}</td>
+                    <td>{{ test.time_taken }}</td>
+                    <td>{{ test.created_at|date:"M d, Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="no-results">
+        <p>You haven't taken any tests at this difficulty yet. <a href="{% url 'index' %}">Start your first test!</a></p>
+    </div>
+    {% endif %}
+    
+    <a href="{% url 'index' %}" class="btn-back">Back to Test</a>
+</div>
+
+<style>
+    .difficulty-filter {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        background: #f0f0f0;
+        color: #333;
+        transition: all 0.3s;
+        font-weight: 600;
+    }
+
+    .filter-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .filter-btn.easy.active {
+        background: #4caf50;
+        color: white;
+    }
+
+    .filter-btn.medium.active {
+        background: #ff9800;
+        color: white;
+    }
+
+    .filter-btn.hard.active {
+        background: #f44336;
+        color: white;
+    }
+
+    .filter-btn.active {
+        background: #667eea;
+        color: white;
+    }
+
+    .difficulty-stats {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        margin: 30px 0;
+    }
+
+    .difficulty-stats h3 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+    }
+
+    .difficulty-stat-box {
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        color: white;
+    }
+
+    .difficulty-stat-box.easy {
+        background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    }
+
+    .difficulty-stat-box.medium {
+        background: linear-gradient(135deg, #ff9800 0%, #e68900 100%);
+    }
+
+    .difficulty-stat-box.hard {
+        background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+    }
+
+    .difficulty-stat-box h4 {
+        margin-bottom: 10px;
+        opacity: 0.9;
+    }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        opacity: 0.8;
+    }
+</style>
+{% endblock %}

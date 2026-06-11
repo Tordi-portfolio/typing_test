@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Typing Test{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Responsive Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'index' %}" class="nav-logo">
+                <i class="fas fa-keyboard"></i> TypingTest
+            </a>
+            
+            <!-- Hamburger Menu Icon -->
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item"><a href="{% url 'index' %}" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="{% url 'leaderboard' %}" class="nav-link">Leaderboard</a></li>
+                
+                {% if user.is_authenticated %}
+                    <li class="nav-item"><a href="{% url 'results' %}" class="nav-link">My Results</a></li>
+                    <li class="nav-item user-info">
+                        <span class="username-icon">
+                            <i class="fas fa-user-circle"></i> {{ user.username }}
+                        </span>
+                    </li>
+                    <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link logout-link">Logout</a></li>
+                {% else %}
+                    <li class="nav-item"><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+                    <li class="nav-item"><a href="{% url 'register' %}" class="nav-link register-link">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Typing Test. All rights reserved.</p>
+    </footer>
+
+    {% load static %}
+    <script src="{% static 'js/script.js' %}"></script>
+    <script>
+        // Mobile Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        // Toggle menu on hamburger click
+        hamburger.addEventListener('click', function() {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const isClickInsideNav = navMenu.contains(event.target);
+            const isClickOnHamburger = hamburger.contains(event.target);
+            
+            if (!isClickInsideNav && !isClickOnHamburger && navMenu.classList.contains('active')) {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

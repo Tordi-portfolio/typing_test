@@ -1,0 +1,92 @@
+{% extends 'typingtest/base.html' %}
+
+{% block title %}Leaderboard{% endblock %}
+
+{% block content %}
+<div class="leaderboard-container">
+    <h1>🏆 Global Leaderboard</h1>
+    
+    <!-- Difficulty Filter -->
+    <div class="leaderboard-filter">
+        <a href="{% url 'leaderboard' %}?difficulty=all" class="filter-btn {% if difficulty == 'all' %}active{% endif %}">All Difficulties</a>
+        <a href="{% url 'leaderboard' %}?difficulty=easy" class="filter-btn easy-btn {% if difficulty == 'easy' %}active{% endif %}">Easy</a>
+        <a href="{% url 'leaderboard' %}?difficulty=medium" class="filter-btn medium-btn {% if difficulty == 'medium' %}active{% endif %}">Medium</a>
+        <a href="{% url 'leaderboard' %}?difficulty=hard" class="filter-btn hard-btn {% if difficulty == 'hard' %}active{% endif %}">Hard</a>
+    </div>
+    
+    {% if tests %}
+    <div class="leaderboard-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Average WPM</th>
+                    <th>Average Accuracy</th>
+                    <th>Tests Taken</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for test in tests %}
+                <tr>
+                    <td><strong>{{ forloop.counter }}</strong></td>
+                    <td>{{ test.user__username }}</td>
+                    <td>{{ test.avg_wpm|floatformat:2 }}</td>
+                    <td>{{ test.avg_accuracy|floatformat:2 }}%</td>
+                    <td>{{ test.test_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>No test data available yet.</p>
+    {% endif %}
+    
+    <a href="{% url 'index' %}" class="btn-back">Back to Test</a>
+</div>
+
+<style>
+    .leaderboard-filter {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+
+    .leaderboard-filter .filter-btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        background: #f0f0f0;
+        color: #333;
+        transition: all 0.3s;
+        font-weight: 600;
+    }
+
+    .leaderboard-filter .filter-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .leaderboard-filter .filter-btn.easy.active {
+        background: #4caf50;
+        color: white;
+    }
+
+    .leaderboard-filter .filter-btn.medium.active {
+        background: #ff9800;
+        color: white;
+    }
+
+    .leaderboard-filter .filter-btn.hard.active {
+        background: #f44336;
+        color: white;
+    }
+
+    .leaderboard-filter .filter-btn.active {
+        background: #667eea;
+        color: white;
+    }
+</style>
+{% endblock %}
